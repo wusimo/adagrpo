@@ -1,0 +1,22 @@
+# Vanilla Path-Conditioned GRPO (no ALN, no mining, no HVTS)
+name: vanilla_grpo
+
+clip_eps: 0.2
+group_size: 8
+num_groups_per_iter: 4
+num_update_epochs: 4
+success_threshold: 0.5
+filter_uniform_groups: true
+
+lr: 1e-5
+max_grad_norm: 1.0
+aux_weight: 0.1
+
+use_aln: false
+use_hard_mining: false
+use_hvts: false
+
+ref_update_interval: 10
+num_iterations: 2000
+eval_every: 50
+num_eval_episodes: 20

@@ -1,0 +1,47 @@
+# AdaGRPO Algorithm Configuration
+name: adagrpo
+
+# GRPO
+clip_eps: 0.2
+group_size: 8
+num_groups_per_iter: 4
+num_update_epochs: 4
+success_threshold: 0.5
+filter_uniform_groups: true
+
+# Learning rates
+lr: 1e-5
+max_grad_norm: 1.0
+
+# Auxiliary loss
+aux_weight: 0.1
+
+# ALN (Adaptive Loss Network)
+use_aln: true
+aln:
+  embed_dim: 256
+  hidden_dim: 256
+  state_conditioned: false
+
+# Hard-trajectory mining
+use_hard_mining: true
+mining:
+  buffer_size: 10000
+  min_history: 2
+  temperature: 1.0
+  uniform_mix: 0.2
+  decay: 0.99
+
+# Stage-aware scheduling
+use_hvts: false
+hvts:
+  use_vlm: false
+  vlm_model_name: "Qwen/Qwen2-VL-7B-Instruct"
+
+# Reference policy update
+ref_update_interval: 10
+
+# Training
+num_iterations: 2000
+eval_every: 50
+num_eval_episodes: 20

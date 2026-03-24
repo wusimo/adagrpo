@@ -1,0 +1,27 @@
+# LIBERO Environment Configuration
+name: libero
+suite: libero_object
+task_name: "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate"
+
+image_size: 128
+max_episode_steps: 300
+action_dim: 7
+obs_dim: 9  # eef_pos(3) + eef_quat(4) + gripper_qpos(2)
+
+# Action chunking
+action_horizon: 16
+
+# Default denoising budget
+default_denoise_steps: 10
+
+# Stage-aware budgets (if HVTS enabled)
+budgets:
+  simple:
+    num_denoise_steps: 2
+    action_horizon: 16
+  medium:
+    num_denoise_steps: 5
+    action_horizon: 12
+  complex:
+    num_denoise_steps: 10
+    action_horizon: 8

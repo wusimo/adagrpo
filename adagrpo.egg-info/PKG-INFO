@@ -1,0 +1,30 @@
+Metadata-Version: 2.4
+Name: adagrpo
+Version: 0.1.0
+Summary: Adaptive Group Relative Policy Optimization for Diffusion-Based VLA Models
+Requires-Python: >=3.10
+Requires-Dist: torch>=2.0
+Requires-Dist: torchvision
+Requires-Dist: diffusers
+Requires-Dist: transformers
+Requires-Dist: hydra-core
+Requires-Dist: omegaconf
+Requires-Dist: wandb
+Requires-Dist: gymnasium
+Requires-Dist: einops
+Requires-Dist: tqdm
+Requires-Dist: numpy
+Provides-Extra: libero
+Requires-Dist: libero; extra == "libero"
+Provides-Extra: robomimic
+Requires-Dist: robomimic; extra == "robomimic"
+Provides-Extra: maniskill
+Requires-Dist: mani_skill; extra == "maniskill"
+Provides-Extra: all
+Requires-Dist: libero; extra == "all"
+Requires-Dist: robomimic; extra == "all"
+Requires-Dist: mani_skill; extra == "all"
+Dynamic: provides-extra
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary

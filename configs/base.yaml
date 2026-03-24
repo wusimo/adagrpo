@@ -1,0 +1,24 @@
+# AdaGRPO Base Configuration
+defaults:
+  - algo: adagrpo
+  - env: libero
+  - policy: diffusion_cnn
+  - _self_
+
+seed: 42
+device: cuda
+
+# Phases
+phase: rl  # il | hvts_setup | rl | eval
+
+# Logging
+wandb:
+  enabled: true
+  project: adagrpo
+  name: null  # auto-generated if null
+
+# Checkpointing
+checkpoint:
+  save_dir: checkpoints/${env.name}/${algo.name}
+  save_every: 100
+  resume_from: null
