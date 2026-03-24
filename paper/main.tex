@@ -337,6 +337,15 @@ DPPO-style Improvement & $+98.1\%$ & $+99.9\%$ & $+98.0\%$ & --- \\
 The biased expert result is particularly noteworthy: the IL policy is trained on demonstrations that are systematically 0.3 units away from optimal, yet GRPO nearly fully recovers the optimal policy ($R \approx 0$).
 This demonstrates that path-conditioned GRPO can serve as a genuine ``self-improvement'' mechanism, not just a refinement of already-good demonstrations.
 
+Figure~\ref{fig:learning_curves} shows the learning curves for all three tasks, comparing AdaGRPO (product ratio) and DPPO-style (per-step ratio). Both methods converge rapidly within the first 50--100 iterations. The IL baseline (dashed line) is consistently surpassed.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/learning_curves.pdf}
+\caption{Learning curves on three synthetic tasks. AdaGRPO (blue) and DPPO-style per-step PPO (red) both rapidly improve over the IL baseline (dashed gray). Evaluation reward is plotted every 10 iterations.}
+\label{fig:learning_curves}
+\end{figure}
+
 The multi-step result (+14.6\%) is weaker because the ratio product spans $K \times H = 25$ terms, accumulating variance that reduces the effective learning signal.
 We analyze this further in Section~\ref{sec:scaling}.
 
@@ -366,6 +375,15 @@ $\eta$ & GRPO Reward & Improvement & Avg Grad Norm & Avg Ratio \\
 \end{tabular}
 \end{table}
 
+Figure~\ref{fig:eta} visualises the improvement and gradient norms across $\eta$ values.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/eta_ablation.pdf}
+\caption{Effect of DDIM stochasticity $\eta$. \emph{Left:} Improvement over IL. All values work when $\sigma_{\min}=0.05$ provides a floor. \emph{Right:} Mean gradient norm. Deterministic DDIM ($\eta=0$) has inflated gradients from the $\sigma_{\min}$ workaround; stochastic sampling ($\eta \geq 0.3$) produces more stable gradients.}
+\label{fig:eta}
+\end{figure}
+
 \paragraph{Variance floor is critical.}
 Table~\ref{tab:sigmin} shows the effect of $\sigma_{\min}$ on the Reaching task with $\eta = 1.0$.
 Without a floor ($\sigma_{\min} = 0$), the last denoising steps produce $1/(2\sigma_k^2) \sim 10^7$ (Table~\ref{tab:sigma}), causing ratio collapse.
@@ -388,8 +406,14 @@ $\sigma_{\min}$ & GRPO Reward & Improvement \\
 \end{table}
 
 \noindent Note: $\sigma_{\min}=0$ causes ratio divergence (confirmed by per-step analysis in Section~\ref{sec:failure}: last denoising step has $1/(2\sigma_k^2) \sim 10^7$).
-All positive values of $\sigma_{\min}$ yield improvement, with smaller values performing better due to less distortion of the mean prediction.
+All positive values of $\sigma_{\min}$ yield improvement, with smaller values performing better due to less distortion of the mean prediction. Figure~\ref{fig:sigmin} shows the trend.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.55\textwidth]{figures/sigma_min_ablation.pdf}
+\caption{Effect of variance floor $\sigma_{\min}$ on the Reaching task. Smaller floors yield higher improvement, as they introduce less distortion to the DDIM mean prediction while still preventing ratio explosion at late denoising steps.}
+\label{fig:sigmin}
+\end{figure}
 
 \paragraph{Ratio aggregation strategy.}
 We compare three strategies for combining per-step ratios (Table~\ref{tab:strategy}): (A)~product (sum of log-ratios, the standard approach), (B)~per-step PPO (independent clipping per step, DPPO-style), and (C)~mean log-ratio (geometric mean).
@@ -409,6 +433,16 @@ C: Mean log-ratio (geometric mean) & $-0.0001$ & $+98.4\%$ \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+
+Figure~\ref{fig:ratio_diag} shows the ratio statistics and gradient norms over training for the Reaching task, confirming that the importance ratios remain well-behaved throughout training.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/ratio_diagnostics.pdf}
+\caption{Ratio diagnostics over training on the Reaching task (product ratio, $\sigma_{\min}=0.05$). \emph{Left:} Mean importance ratio stays close to 1.0. \emph{Center:} Ratio standard deviation remains bounded. \emph{Right:} Gradient norm (before clipping) is stable, confirming numerically well-behaved training.}
+\label{fig:ratio_diag}
+\end{figure}
 
 
 \subsection{Q3: Scaling Analysis}
@@ -433,6 +467,15 @@ $K$ & IL Reward & GRPO Reward & Improvement & Avg Ratio Std \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+Figure~\ref{fig:kscale} visualises the relationship between $K$ and both performance and ratio variance.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/k_scaling.pdf}
+\caption{Effect of denoising steps $K$. \emph{Left:} GRPO reward (higher is better) is stable across $K=3$--$10$. \emph{Right:} Mean ratio standard deviation decreases with $K$, suggesting that more denoising steps distribute the ratio signal more evenly.}
+\label{fig:kscale}
+\end{figure}
 
 \paragraph{Multi-step ratio product.}
 The multi-step environment (Section~\ref{sec:q1}) uses $H=5$ episode steps $\times$ $K=5$ denoising steps $= 25$ terms in the ratio product.
